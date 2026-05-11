@@ -77,11 +77,33 @@ module.exports = ({ strapi }) => ({
     if (!alt) {
       throw new Error('OpenAI returned empty alt text');
     }
-    await strapi.db.query(FILE_MODEL).update({
+
+    // Use the official upload service so we don't bypass any internal sync logic.
+    // Falls back to a direct db query if the upload plugin's API is unavailable.
+    const uploadSvc = strapi.plugin('upload')?.service('upload');
+    if (uploadSvc && typeof uploadSvc.updateFileInfo === 'function') {
+      await uploadSvc.updateFileInfo(file.id, { alternativeText: alt });
+    } else {
+      await strapi.db.query(FILE_MODEL).update({
+        where: { id: file.id },
+        data: { alternativeText: alt },
+      });
+    }
+
+    // Verify the write actually landed — guards against silent overwrites and
+    // gives us a clear error in the logs instead of "looks generated but UI is empty".
+    const after = await strapi.db.query(FILE_MODEL).findOne({
       where: { id: file.id },
-      data: { alternativeText: alt },
+      select: ['id', 'alternativeText'],
     });
-    strapi.log.info(`[${PLUGIN_ID}] generated alt for file id=${file.id}: "${alt}"`);
+    if (!after || (after.alternativeText || '').trim() !== alt.trim()) {
+      strapi.log.error(
+        `[${PLUGIN_ID}] write did not persist for file id=${file.id}. ` +
+          `expected="${alt}" actual="${after?.alternativeText || ''}"`
+      );
+      throw new Error('Alt text update did not persist');
+    }
+    strapi.log.info(`[${PLUGIN_ID}] saved alt for file id=${file.id}: "${alt}"`);
     return { file: { ...file, alternativeText: alt }, alternativeText: alt };
   },
 
