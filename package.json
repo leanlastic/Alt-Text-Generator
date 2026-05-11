@@ -1,0 +1,59 @@
+{
+  "name": "strapi-plugin-alt-text-generator",
+  "version": "0.1.0",
+  "description": "Generate alt text for images on upload using OpenAI vision models. Auto-fills missing alternativeText on the Upload plugin and provides manual + bulk backfill from the admin panel.",
+  "keywords": [
+    "strapi",
+    "plugin",
+    "strapi-plugin",
+    "alt-text",
+    "accessibility",
+    "a11y",
+    "openai",
+    "upload",
+    "media-library"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "Leanlastic",
+    "email": "hello@leanlastic.com"
+  },
+  "maintainers": [
+    {
+      "name": "Leanlastic",
+      "email": "hello@leanlastic.com"
+    }
+  ],
+  "main": "./strapi-server.js",
+  "files": [
+    "admin",
+    "server",
+    "strapi-admin.js",
+    "strapi-server.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "verify": "node -e \"require('./strapi-server.js'); require('./strapi-admin.js'); console.log('ok')\""
+  },
+  "dependencies": {
+    "openai": "^4.28.0"
+  },
+  "peerDependencies": {
+    "@strapi/strapi": "^5.0.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-router-dom": "^6.0.0",
+    "styled-components": "^6.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=6.0.0"
+  },
+  "strapi": {
+    "kind": "plugin",
+    "name": "alt-text-generator",
+    "displayName": "Alt Text Generator",
+    "description": "Automatically generate alt text for images uploaded to the Media Library using OpenAI vision."
+  }
+}
