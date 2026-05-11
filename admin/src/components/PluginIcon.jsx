@@ -1,6 +1,6 @@
 import React from 'react';
-import { Image } from '@strapi/icons';
+import { Sparkle } from '@strapi/icons';
 
-const PluginIcon = () => <Image />;
+const PluginIcon = () => <Sparkle />;
 
 export default PluginIcon;
